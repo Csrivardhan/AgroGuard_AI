@@ -1,0 +1,17 @@
+{
+  "model_version": "AGROGUARD-ML-v2.0",
+  "selected_model": "Tuned Random Forest",
+  "test_accuracy": 0.990909090909091,
+  "test_macro_precision": 0.9919066440805572,
+  "test_macro_recall": 0.990909090909091,
+  "test_macro_f1": 0.9908691003415904,
+  "test_log_loss": 0.10850364628988103,
+  "test_top_label_ece": 0.0918587532253179,
+  "conformal_nominal_coverage": 0.9,
+  "test_empirical_conformal_coverage": 0.8704545454545455,
+  "test_mean_prediction_set_size": 0.8704545454545455,
+  "train_rows": 1320,
+  "conformal_calibration_rows": 440,
+  "test_rows": 440,
+  "classes": 22
+}

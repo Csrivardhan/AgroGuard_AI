@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AGROGUARD AI — Eco-Friendly Crop & Soil Guide</title>
+  <style>
+    :root {
+      --bg: #f3f7ef;
+      --surface: #fcfdf9;
+      --surface-alt: #e8f0e1;
+      --border: #cddbc2;
+      --text: #1b2a1e;
+      --muted: #526856;
+      --primary: #236b3e;
+      --primary-hover: #19512e;
+      --accent: #b86b28;
+      --ok-bg: #e4f5ea;
+      --ok-border: #2e854e;
+      --warn-bg: #fdf4e3;
+      --warn-border: #c97a16;
+      --err-bg: #fdeaea;
+      --err-border: #c93b3b;
+      --shadow: 0 6px 20px rgba(27, 42, 30, 0.06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+    body {
+      background: radial-gradient(circle at top right, #e9f2e1 0%, var(--bg) 55%);
+      color: var(--text);
+      padding: 24px;
+      max-width: 1420px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom: 4px solid var(--primary);
+      border-radius: 18px;
+      padding: 18px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .brand h1 { font-size: 1.45rem; color: var(--primary); font-weight: 800; }
+    .brand p { font-size: 0.85rem; color: var(--muted); margin-top: 3px; }
+    .header-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .role-select {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--primary);
+      background: var(--surface-alt);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .engine-chip {
+      background: var(--ok-bg);
+      color: var(--primary);
+      border: 1px solid var(--ok-border);
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .layout { display: grid; grid-template-columns: 345px 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .label-cap {
+      font-size: 0.73rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+    .preset-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-align: left;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .preset-btn:hover { background: #dce9d1; border-color: var(--primary); }
+    .preset-btn span { display: block; font-size: 0.7rem; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+    .slider-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+    }
+    .slider-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .slider-top label { font-size: 0.82rem; font-weight: 600; }
+    .slider-top input[type="number"] {
+      width: 74px;
+      padding: 4px 7px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--surface);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.84rem;
+      text-align: right;
+    }
+    input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+
+    .context-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .context-grid label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    .context-grid select, .context-grid input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.84rem;
+    }
+
+    .btn-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 16px; }
+    .btn-run {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 11px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .btn-run:hover { background: var(--primary-hover); }
+    .btn-export {
+      background: var(--surface);
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      padding: 12px;
+      border-radius: 11px;
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .btn-export:hover { background: var(--surface-alt); }
+
+    .banner {
+      padding: 18px 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    .banner.ok { background: var(--ok-bg); border: 1.5px solid var(--ok-border); }
+    .banner.review { background: var(--warn-bg); border: 1.5px solid var(--warn-border); }
+    .banner.error { background: var(--err-bg); border: 1.5px solid var(--err-border); }
+    .banner h2 { font-size: 1.25rem; font-weight: 800; }
+    .banner p { font-size: 0.84rem; color: var(--muted); margin-top: 3px; }
+
+    .stakeholder-strip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.83rem;
+      box-shadow: var(--shadow);
+    }
+
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 0.74rem; font-weight: 700; }
+    .pill.green { background: #cfead8; color: #14532d; }
+    .pill.amber { background: #fbe7be; color: #78350f; }
+    .pill.red { background: #f9d2d2; color: #7f1d1d; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 9px 15px;
+      border-radius: 11px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 1180px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .card h3 { font-size: 0.96rem; color: var(--primary); margin-bottom: 4px; }
+    .card-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+
+    .bar-item { margin-bottom: 10px; font-size: 0.82rem; }
+    .bar-meta { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .bar-track { background: var(--surface-alt); height: 9px; border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--primary); border-radius: 99px; }
+    .bar-fill.neg { background: #c93b3b; }
+    .bar-fill.alt { background: var(--accent); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 700; }
+
+    .kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kv-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+    .kv-box small { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 2px; }
+    .kv-box strong { font-size: 0.86rem; color: var(--text); }
+
+    .voice-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .voice-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .voice-btn:hover { background: var(--primary); color: #ffffff; }
+
+    pre.passport {
+      background: #18271c;
+      color: #d8f3dc;
+      padding: 14px;
+      border-radius: 12px;
+      font-family: Consolas, monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      max-height: 360px;
+      line-height: 1.5;
+    }
+    .note { text-align: center; font-size: 0.76rem; color: var(--muted); margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>AGROGUARD AI</h1>
+      <p>Simple Crop Match, Soil Care & Field Safety Guide for Farmers and Advisors</p>
+    </div>
+    <div class="header-controls">
+      <select id="stakeholderRole" class="role-select" onchange="updateStakeholderView()">
+        <option value="credit_officer" selected>View: Farm Loan & Risk Officer</option>
+        <option value="farmer">View: Farmer (Soil, Bags & Voice)</option>
+        <option value="agri_officer">View: Field Agriculture Officer</option>
+      </select>
+      <div id="apiStatus" class="engine-chip">AGROGUARD-ML-v2.0</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="label-cap">1. Quick Field Examples</div>
+      <div class="presets">
+        <button class="preset-btn" onclick="applyPreset('rice')">Good Rice Field<span>Clear Fit • Low Risk</span></button>
+        <button class="preset-btn" onclick="applyPreset('boundary')">Mixed Soil & Rain<span>Needs Second Look</span></button>
+        <button class="preset-btn" onclick="applyPreset('anomaly')">Unusual Weather<span>Uncommon Reading</span></button>
+        <button class="preset-btn" onclick="applyPreset('invalid')">Wrong Meter Reading<span>Check Input Values</span></button>
+      </div>
+
+      <div class="label-cap">2. Soil & Weather Readings</div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Nitrogen (N) kg/ha</label><input type="number" id="N" value="90" oninput="syncSlider('N')"></div>
+        <input type="range" id="N_range" min="0" max="150" value="90" oninput="syncInput('N')">
+      </div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Phosphorus (P) kg/ha</label><input type="number" id="P" value="42" oninput="syncSlider('P')"></div>
+        <input type="range" id="P_range" min="0" max="150" value="42" oninput="syncInput('P')">
+      </div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Potassium (K) kg/ha</label><input type="number" id="K" value="43" oninput="syncSlider('K')"></div>
+        <input type="range" id="K_range" min="0" max="210" value="43" oninput="syncInput('K')">
+      </div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Temperature (°C)</label><input type="number" id="temperature" value="20.8" step="0.1" oninput="syncSlider('temperature')"></div>
+        <input type="range" id="temperature_range" min="5" max="48" value="20.8" step="0.1" oninput="syncInput('temperature')">
+      </div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Air Moisture / Humidity (%)</label><input type="number" id="humidity" value="82.0" step="0.5" oninput="syncSlider('humidity')"></div>
+        <input type="range" id="humidity_range" min="10" max="100" value="82.0" step="0.5" oninput="syncInput('humidity')">
+      </div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Soil Acidity / pH (0–14)</label><input type="number" id="ph" value="6.5" step="0.1" oninput="syncSlider('ph')"></div>
+        <input type="range" id="ph_range" min="3.0" max="10.0" value="6.5" step="0.1" oninput="syncInput('ph')">
+      </div>
+      <div class="slider-box">
+        <div class="slider-top"><label>Rainfall (mm)</label><input type="number" id="rainfall" value="202.9" step="1" oninput="syncSlider('rainfall')"></div>
+        <input type="range" id="rainfall_range" min="10" max="320" value="202.9" step="1" oninput="syncInput('rainfall')">
+      </div>
+
+      <div class="context-grid">
+        <div>
+          <label>Crop Season</label>
+          <select id="season">
+            <option value="Kharif" selected>Kharif (Rainy)</option>
+            <option value="Rabi">Rabi (Winter)</option>
+            <option value="Zaid">Zaid (Summer)</option>
+            <option value="">Any Season</option>
+          </select>
+        </div>
+        <div>
+          <label>State / Area</label>
+          <input type="text" id="region" value="Telangana">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-run" onclick="runAnalysis()">Check Best Crop</button>
+        <button class="btn-export" onclick="downloadPassport()">Save Record</button>
+      </div>
+    </div>
+
+    <div>
+      <div id="stakeholderStrip" class="stakeholder-strip"></div>
+
+      <div id="trustBanner" class="banner ok">
+        <div>
+          <h2 id="decisionTitle">Checking your field readings...</h2>
+          <p id="decisionSub">Pick a sample field on the left or move the sliders to check crop fit</p>
+        </div>
+        <div id="trustBadges"></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('overview', this)">Crop Match & Reasons</button>
+        <button class="tab-btn" onclick="switchTab('farmer', this)">Fertilizer Bags & Voice</button>
+        <button class="tab-btn" onclick="switchTab('arena', this)">6-Model Check</button>
+        <button class="tab-btn" onclick="switchTab('frontier', this)">Field Fit & Local Area</button>
+        <button class="tab-btn" onclick="switchTab('passport', this)">Saved Proof Record</button>
+      </div>
+
+      <div id="tab-overview" class="tab-pane active">
+        <div class="grid-2">
+          <div class="card">
+            <h3>What Helped This Crop Most</h3>
+            <p id="autopsyMargin" class="card-sub"></p>
+            <div id="autopsyBars"></div>
+          </div>
+          <div class="card">
+            <h3>Top Crop Choices & Safety Check</h3>
+            <p class="card-sub">Match scores, safe crop group (90% range), and unusual weather check</p>
+            <div id="topThreeBars" style="margin-bottom:14px;"></div>
+            <div id="diagnosticsBox" class="kv-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-farmer" class="tab-pane">
+        <div class="card">
+          <h3>Fertilizer Bags Per Acre & Voice Guide</h3>
+          <p class="card-sub">Estimated bags per acre, rough cost in rupees, soil pH tip, and voice play</p>
+          <div id="farmerContent"></div>
+          <div class="voice-btns">
+            <button class="voice-btn" onclick="speakAdvice('en')">Speak English</button>
+            <button class="voice-btn" onclick="speakAdvice('hi')">हिंदी में सुनें</button>
+            <button class="voice-btn" onclick="speakAdvice('te')">తెలుగులో వినండి</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-arena" class="tab-pane">
+        <div class="grid-2">
+          <div class="card">
+            <h3>How All 6 Models Vote Now</h3>
+            <p id="arenaConsensus" class="card-sub"></p>
+            <table>
+              <thead><tr><th>Model</th><th>Crop Pick</th><th>Match %</th><th>Agreement</th></tr></thead>
+              <tbody id="arenaLiveTable"></tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Test Score Table (440 Sample Fields)</h3>
+            <p class="card-sub">Accuracy and balance tested across 22 crops</p>
+            <table>
+              <thead><tr><th>Model</th><th>CV Score</th><th>Test Acc</th><th>Test F1</th><th>Error Gap</th></tr></thead>
+              <tbody id="leaderboardTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-frontier" class="tab-pane">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Crop Fit Against Ideal Field Ranges</h3>
+            <p class="card-sub">Score out of 100 compared with typical healthy ranges for each crop</p>
+            <div id="frontierList"></div>
+          </div>
+          <div class="card">
+            <h3>Season, Water & State Guide</h3>
+            <p class="card-sub">Helpful local farming notes for Indian seasons and states</p>
+            <div id="regionalContent"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-passport" class="tab-pane">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div>
+              <h3>Verifiable Decision Record</h3>
+              <p class="card-sub" style="margin-bottom:0;">Tamper-checked summary of readings, crop match, and safety status</p>
+            </div>
+            <button class="btn-run" style="padding:8px 14px;" onclick="downloadPassport()">Download .JSON</button>
+          </div>
+          <pre id="passportBox" class="passport">Run a check to create a record...</pre>
+        </div>
+      </div>
+
+      <p id="importantNote" class="note"></p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "";
+    const FEATURES = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"];
+    let latestPassport = null;
+    let latestVoiceSummaries = {};
+
+    const ROLE_NOTES = {
+      credit_officer: "<strong>Farm Loan & Risk Officer View:</strong> Check whether the crop match is clear or needs a second look, look for unusual weather flags, and save the proof record before loan support.",
+      farmer: "<strong>Farmer View:</strong> Open <em>Fertilizer Bags & Voice</em> to see rough Urea, DAP, and MOP bags per acre, estimated rupee cost, soil pH care, and listen in English, Hindi, or Telugu.",
+      agri_officer: "<strong>Field Agriculture Officer View:</strong> See how all 6 models agree, check each soil and weather reading against healthy ranges, and review local season and water notes."
+    };
+
+    const PRESETS = {
+      rice:     { N: 90, P: 42, K: 43, temperature: 20.8, humidity: 82.0, ph: 6.5, rainfall: 202.9, season: "Kharif", region: "Telangana" },
+      boundary: { N: 40, P: 40, K: 40, temperature: 20.8, humidity: 82.0, ph: 6.2, rainfall: 100.0, season: "Kharif", region: "Maharashtra" },
+      anomaly:  { N: 40, P: 40, K: 40, temperature: 42.0, humidity: 95.0, ph: 6.5, rainfall: 15.0,  season: "Zaid",   region: "Rajasthan" },
+      invalid:  { N: -10, P: 40, K: 0, temperature: 20.8, humidity: 80.2, ph: 16.0, rainfall: 300.0, season: "Kharif", region: "Telangana" }
+    };
+
+    function updateStakeholderView() {
+      const role = document.getElementById("stakeholderRole").value;
+      document.getElementById("stakeholderStrip").innerHTML = ROLE_NOTES[role] || "";
+    }
+
+    function speakAdvice(lang) {
+      const text = latestVoiceSummaries[lang];
+      if (!text || !("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang === "hi" ? "hi-IN" : (lang === "te" ? "te-IN" : "en-IN");
+      window.speechSynthesis.speak(utter);
+    }
+
+    function syncSlider(f) {
+      const v = parseFloat(document.getElementById(f).value);
+      if (!isNaN(v)) document.getElementById(`${f}_range`).value = v;
+    }
+    function syncInput(f) { document.getElementById(f).value = document.getElementById(`${f}_range`).value; }
+
+    function switchTab(name, btn) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(`tab-${name}`).classList.add("active");
+    }
+
+    function applyPreset(key) {
+      const p = PRESETS[key];
+      FEATURES.forEach(f => { document.getElementById(f).value = p[f]; syncSlider(f); });
+      document.getElementById("season").value = p.season;
+      document.getElementById("region").value = p.region;
+      runAnalysis();
+    }
+
+    function getPayload() {
+      const obj = {};
+      FEATURES.forEach(f => obj[f] = parseFloat(document.getElementById(f).value));
+      obj.season = document.getElementById("season").value || null;
+      obj.region = document.getElementById("region").value || null;
+      return obj;
+    }
+
+    async function loadMetadata() {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/metadata`);
+        if (!res.ok) return;
+        const meta = await res.json();
+        document.getElementById("apiStatus").innerText = `${meta.model_version} • ${meta.selected_model}`;
+        document.getElementById("leaderboardTable").innerHTML = (meta.arena_leaderboard || []).map(r => `
+          <tr>
+            <td><strong>${r.model}</strong></td>
+            <td>${r.cv_macro_f1}</td>
+            <td>${(r.test_accuracy * 100).toFixed(1)}%</td>
+            <td>${r.test_macro_f1}</td>
+            <td>${r.test_ece}</td>
+          </tr>
+        `).join("");
+      } catch (e) {}
+    }
+
+    async function runAnalysis() {
+      const banner = document.getElementById("trustBanner");
+      document.getElementById("decisionTitle").innerText = "Checking your field readings...";
+      const res = await fetch(`${API_BASE}/api/v1/analyze`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(getPayload())
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        banner.className = "banner error";
+        document.getElementById("decisionTitle").innerText = "Please Check Your Readings";
+        document.getElementById("decisionSub").innerText = (data.detail?.errors || ["Invalid input"]).join("  •  ");
+        document.getElementById("trustBadges").innerHTML = `<span class="pill red">INPUT CHECK</span>`;
+        return;
+      }
+
+      const t = data.trust_engine;
+      const isOk = t.decision_status === "MODEL_OUTPUT_AVAILABLE";
+      banner.className = isOk ? "banner ok" : "banner review";
+      const statusLabel = isOk ? "Clear Match" : "Needs Second Look";
+      document.getElementById("decisionTitle").innerText =
+        `${statusLabel}: ${t.top_prediction.toUpperCase()} (${t.top_prediction_probability_percent}%)`;
+      document.getElementById("decisionSub").innerText =
+        `Safe Crop Group (90%): [${t.conformal_prediction_set.join(", ") || "None Clear"}]  •  Weather Pattern Score: ${t.anomaly_decision_score}`;
+      document.getElementById("trustBadges").innerHTML = `
+        <span class="pill ${isOk ? "green" : "amber"}">${t.conformal_set_status}</span>
+        <span class="pill ${t.anomaly_status === "NOT_FLAGGED" ? "green" : "red"}">${t.anomaly_status === "NOT_FLAGGED" ? "Normal Pattern" : "Unusual Pattern"}</span>
+      `;
+
+      document.getElementById("topThreeBars").innerHTML = t.top_three.map((item, i) => `
+        <div class="bar-item">
+          <div class="bar-meta"><span>#${i+1} <strong>${item.crop.toUpperCase()}</strong></span><span>${item.calibrated_probability_percent}%</span></div>
+          <div class="bar-track"><div class="bar-fill ${i === 0 ? "" : "alt"}" style="width:${item.calibrated_probability_percent}%"></div></div>
+        </div>
+      `).join("");
+
+      document.getElementById("diagnosticsBox").innerHTML = `
+        <div class="kv-box"><small>Safe Range Target</small><strong>${(t.conformal_nominal_coverage*100).toFixed(0)}% Match Target</strong></div>
+        <div class="kv-box"><small>Weather Check</small><strong>${t.anomaly_status === "NOT_FLAGGED" ? "Normal" : "Unusual"} (${t.anomaly_decision_score})</strong></div>
+        <div class="kv-box"><small>Model Agreement</small><strong>${data.model_challenge_arena.consensus_score} Models Agree</strong></div>
+        <div class="kv-box"><small>Rough Cost / Acre</small><strong>₹${data.farmer_action_plan?.estimated_input_cost_inr_per_acre ?? 0}</strong></div>
+      `;
+
+      const fp = data.farmer_action_plan || {};
+      const bags = fp.fertilizer_prescription_per_acre || {};
+      const def = fp.nutrient_deficit_kg_per_acre || {};
+      latestVoiceSummaries = fp.voice_summaries || {};
+      document.getElementById("farmerContent").innerHTML = `
+        <div class="kv-grid" style="margin-bottom:12px;">
+          <div class="kv-box"><small>Urea (45 kg bags / acre)</small><strong>${bags.urea_bags_45kg ?? 0} bags (${bags.urea_46N_kg ?? 0} kg) • N gap: ${def.N ?? 0} kg/ac</strong></div>
+          <div class="kv-box"><small>DAP (50 kg bags / acre)</small><strong>${bags.dap_bags_50kg ?? 0} bags (${bags.dap_18N_46P_kg ?? 0} kg) • P gap: ${def.P ?? 0} kg/ac</strong></div>
+          <div class="kv-box"><small>MOP (50 kg bags / acre)</small><strong>${bags.mop_bags_50kg ?? 0} bags (${bags.mop_60K_kg ?? 0} kg) • K gap: ${def.K ?? 0} kg/ac</strong></div>
+          <div class="kv-box"><small>Rough Cost Per Acre</small><strong>₹${fp.estimated_input_cost_inr_per_acre ?? 0}</strong></div>
+        </div>
+        <div class="kv-box"><small>Soil Acidity (pH) Tip</small><strong>${fp.soil_ph_amendment || ""}</strong></div>
+      `;
+
+      const a = data.decision_autopsy;
+      document.getElementById("autopsyMargin").innerText =
+        `Lead over next crop (${a.runner_up_crop}): +${a.confidence_margin_over_runner_up_percent}%`;
+      document.getElementById("autopsyBars").innerHTML = a.feature_attributions.map(f => {
+        const w = Math.min(100, Math.abs(f.probability_impact_percent) * 1.4);
+        const sign = f.probability_impact_percent >= 0 ? "+" : "";
+        return `<div class="bar-item">
+          <div class="bar-meta"><span><strong>${f.feature}</strong> = ${f.input_value} (Typical: ${f.crop_ideal_iqr[0]}–${f.crop_ideal_iqr[1]})</span><span>${sign}${f.probability_impact_percent}%</span></div>
+          <div class="bar-track"><div class="bar-fill ${f.probability_impact_percent < 0 ? "neg" : ""}" style="width:${w}%"></div></div>
+        </div>`;
+      }).join("");
+
+      const ar = data.model_challenge_arena;
+      document.getElementById("arenaConsensus").innerText = `Current Agreement: ${ar.consensus_score}`;
+      document.getElementById("arenaLiveTable").innerHTML = ar.per_model_predictions.map(m => `
+        <tr>
+          <td>${m.model}</td>
+          <td><strong>${m.predicted_crop}</strong></td>
+          <td>${m.calibrated_confidence_percent}%</td>
+          <td><span class="pill ${m.agrees_with_champion ? "green" : "amber"}">${m.agrees_with_champion ? "Agrees" : "Other Pick"}</span></td>
+        </tr>
+      `).join("");
+
+      const fr = data.crop_compatibility_frontier;
+      document.getElementById("frontierList").innerHTML = fr.evaluated_candidates.map(c => `
+        <div class="kv-box" style="margin-bottom:10px;">
+          <div class="bar-meta"><span><strong>${c.crop.toUpperCase()}</strong></span><span>Fit Score: <strong>${c.agronomic_suitability_score}/100</strong></span></div>
+          <div class="bar-track" style="margin:6px 0;"><div class="bar-fill" style="width:${c.agronomic_suitability_score}%"></div></div>
+          <small>${c.limiting_factors.length ? "Watch out for: " + c.limiting_factors.join(" • ") : "All 7 soil and weather readings fit well."}</small>
+        </div>
+      `).join("");
+
+      const r = data.regional_agricultural_intelligence;
+      document.getElementById("regionalContent").innerHTML = `
+        <div class="kv-grid" style="margin-bottom:10px;">
+          <div class="kv-box"><small>Good Seasons</small><strong>${(r.recommended_seasons || []).join(", ")}</strong></div>
+          <div class="kv-box"><small>Water Need</small><strong>${r.water_requirement || "N/A"}</strong></div>
+          <div class="kv-box"><small>Helpful Soil Types</small><strong>${(r.preferred_soil_types || []).join(", ")}</strong></div>
+          <div class="kv-box"><small>Common States</small><strong>${(r.major_indian_regions || []).join(", ")}</strong></div>
+        </div>
+        <div class="kv-box"><small>Field Tip</small><strong>${r.agronomic_note || ""}</strong></div>
+      `;
+
+      latestPassport = data.decision_passport;
+      document.getElementById("passportBox").innerText = JSON.stringify(latestPassport, null, 2);
+      document.getElementById("importantNote").innerText = data.important_note;
+    }
+
+    async function downloadPassport() {
+      const res = await fetch(`${API_BASE}/api/v1/passport/download`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(getPayload())
+      });
+      if (!res.ok) { alert("Cannot save record for invalid readings."); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${latestPassport?.passport_id || "AGROGUARD_Passport"}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = async () => { updateStakeholderView(); await loadMetadata(); await runAnalysis(); };
+  </script>
+</body>
+</html>
